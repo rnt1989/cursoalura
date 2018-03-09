@@ -8,6 +8,16 @@
 	
 	<h:form>
 		<div>
+			<h:outputLabel value="Autores"/>
+			<h:selectManyListbox value="#{adminLivrosBean.autoresId}" converter="javax.faces.Integer">
+				<f:selectItems 
+					value="#{adminLivrosBean.autores}"
+					var="autor"
+					itemValue="#{autor.id}"
+					itemLabel="#{autor.nome}"/>
+			</h:selectManyListbox>
+		</div>
+		<div>
 			<h:outputLabel value="Titulo" />
 			<h:inputText value="#{adminLivrosBean.livro.titulo}"/>
 		</div>
