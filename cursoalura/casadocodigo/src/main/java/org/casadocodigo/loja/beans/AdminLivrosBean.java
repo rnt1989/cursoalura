@@ -1,10 +1,10 @@
 package org.casadocodigo.loja.beans;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
@@ -20,7 +20,6 @@ import br.com.casadocodigo.loja.dao.LivroDAO;
 public class AdminLivrosBean {
 
 	private Livro livro = new Livro();
-	private List<Integer> autoresId = new ArrayList<>();
 
 	@Inject
 	private LivroDAO livroDAO;
@@ -28,15 +27,18 @@ public class AdminLivrosBean {
 	@Inject
 	private AutorDAO autorDAO;
 
+	@Inject
+	private FacesContext context;
+
 	@Transactional
-	public void salvar() {
-		for (Integer autorId : autoresId) {
-			livro.getAutores().add(new Autor(autorId));
-		}
+	public String salvar() {
 		livroDAO.salvar(livro);
-		System.out.println("Livro salvo com sucesso! Livro salvo: " + livro);
-		this.livro = new Livro();
-		this.autoresId = new ArrayList<>();
+
+		// O Message dura por mais de um request
+		context.getExternalContext().getFlash().setKeepMessages(true);
+		context.addMessage(null, new FacesMessage("Livro salvo com sucesso!"));
+
+		return "/livros/lista?faces-redirect=true";
 	}
 
 	public List<Autor> getAutores() {
@@ -49,13 +51,5 @@ public class AdminLivrosBean {
 
 	public void setLivro(Livro livro) {
 		this.livro = livro;
-	}
-
-	public List<Integer> getAutoresId() {
-		return autoresId;
-	}
-
-	public void setAutoresId(List<Integer> autoresId) {
-		this.autoresId = autoresId;
 	}
 }
